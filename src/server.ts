@@ -96,6 +96,6 @@ const app = express();
 
 app.use(express.json());
 
-app.listen(3090, () => {
-    console.log('👽 Server started on port 3090!');
+app.listen(process.env.PORT || 3090, () => {
+    console.log(`👽 Server started on port ${process.env.PORT || 3090}!`);
 });
