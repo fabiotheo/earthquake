@@ -7,7 +7,8 @@ import 'dotenv/config';
 import { query as q } from 'faunadb';
 import Telegram from 'node-telegram-bot-api';
 
-import { DataResponse, EarthquakeData, MessageProps } from './types/Seismicportal';
+import { DataResponse, EarthquakeData } from './types/Seismicportal';
+import CreateMessage from './services/CreateMessage';
 
 import { fauna } from './services/fauna';
 
@@ -23,19 +24,6 @@ const format = 'json';
 const minMagnitude = 3;
 const telegramToken = process.env.TELEGRAM_API_KEY || '';
 const telegramChatId = process.env.TELEGRAM_CHAT_ID || '';
-
-const sendMessage = ({ mag, hour, local, lat, long, last }: MessageProps) => {
-    const message = `🚨 *Atenção* 🚨
-    *Magnitude*: ${mag} ML
-    *Localidade*: ${local}
-    *Horário*: ${hour}
-    Latitude: ${lat}
-    Longitude: ${long}
-    Tremores nas ultimas 24 horas: ${last}
-    `;
-
-    return message;
-};
 
 const botTelegram = new Telegram(telegramToken, { polling: true });
 
@@ -85,7 +73,7 @@ const start = async () => {
                 const { data } = seism;
                 await botTelegram.sendMessage(
                     telegramChatId,
-                    sendMessage({
+                    CreateMessage({
                         mag: data.magnitude,
                         local: data.region,
                         hour: data.time,
