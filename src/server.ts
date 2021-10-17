@@ -28,6 +28,7 @@ const telegramChatId = process.env.TELEGRAM_CHAT_ID || '';
 const botTelegram = new Telegram(telegramToken, { polling: true });
 
 const start = async () => {
+    console.log('Server Started');
     setInterval(async () => {
         const response = await axios.get<DataResponse>(
             `${urlQuery}?limit=${limit}&start=${before}&end=${now}&lat=${latitude}&lon=${longitude}&maxradius=${maxradius}&format=${format}&minmag=${minMagnitude}`,
