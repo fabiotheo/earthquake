@@ -89,7 +89,7 @@ const start = async () => {
         } catch {
             console.log('Não há dados');
         }
-    }, 3000);
+    }, 1000 * 60 * 5);
 };
 
 start().then();
