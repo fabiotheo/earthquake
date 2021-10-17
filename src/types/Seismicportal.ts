@@ -11,7 +11,7 @@ export type PropertiesFeatures = {
     lastupdate: Date;
     magtype: string;
     evtype: string;
-    long: number;
+    lon: number;
     auth: string;
     lat: number;
     depth: number;
@@ -58,6 +58,6 @@ export type MessageProps = {
     hour: Date;
     local: string;
     lat: number;
-    long: number;
+    lon: number;
     last: number;
 };

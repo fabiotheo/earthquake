@@ -31,63 +31,65 @@ const botTelegram = new Telegram(telegramToken, { polling: true });
 const start = async () => {
     console.log('Server Started');
     setInterval(async () => {
-        const response = await axios.get<DataResponse>(
-            `${urlQuery}?limit=${limit}&start=${before}&end=${now}&lat=${latitude}&lon=${longitude}&maxradius=${maxradius}&format=${format}&minmag=${minMagnitude}`,
-        );
-
-        console.log(response.data.features[0].properties.mag);
-
-        const promises = await response.data.features.map(async feature => {
-            const dataCreated = await fauna.query<EarthquakeData>(
-                q.If(
-                    q.Not(q.Exists(q.Match(q.Index('events_by_id'), feature.id))),
-                    q.Create(q.Collection('earthquake_events'), {
-                        data: {
-                            id: feature.id,
-                            magnitude: feature.properties.mag,
-                            latitude: feature.properties.lat,
-                            longitude: feature.properties.long,
-                            depth: feature.properties.depth,
-                            time: feature.properties.time,
-                            source_id: feature.properties.source_id,
-                            region: feature.properties.flynn_region,
-                            last24: response.data.metadata.totalCount,
-                        },
-                    }),
-                    {
-                        data: {
-                            id: feature.id,
-                            status: 'already created',
-                            alreadyCreated: true,
-                        },
-                    },
-                ),
+        try {
+            const response = await axios.get<DataResponse>(
+                `${urlQuery}?limit=${limit}&start=${before}&end=${now}&lat=${latitude}&lon=${longitude}&maxradius=${maxradius}&format=${format}&minmag=${minMagnitude}`,
             );
 
-            return dataCreated;
-        });
-
-        const dataEarthquake = await Promise.all(promises);
-
-        dataEarthquake.map(async seism => {
-            console.log(seism);
-            if (!seism.data.alreadyCreated) {
-                const { data } = seism;
-                await botTelegram.sendMessage(
-                    telegramChatId,
-                    CreateMessage({
-                        mag: data.magnitude,
-                        local: data.region,
-                        hour: data.time,
-                        lat: data.latitude,
-                        long: data.longitude,
-                        last: data.last24,
-                    }),
-                    { parse_mode: 'Markdown' },
+            const promises = await response.data.features.map(async feature => {
+                const dataCreated = await fauna.query<EarthquakeData>(
+                    q.If(
+                        q.Not(q.Exists(q.Match(q.Index('events_by_id'), feature.id))),
+                        q.Create(q.Collection('earthquake_events'), {
+                            data: {
+                                id: feature.id,
+                                magnitude: feature.properties.mag,
+                                latitude: feature.properties.lat,
+                                longitude: feature.properties.lon,
+                                depth: feature.properties.depth,
+                                time: feature.properties.time,
+                                source_id: feature.properties.source_id,
+                                region: feature.properties.flynn_region,
+                                last24: response.data.metadata.totalCount,
+                            },
+                        }),
+                        {
+                            data: {
+                                id: feature.id,
+                                status: 'already created',
+                                alreadyCreated: true,
+                            },
+                        },
+                    ),
                 );
-            }
-        });
-    }, 1000 * 60 * 5);
+
+                return dataCreated;
+            });
+
+            const dataEarthquake = await Promise.all(promises);
+
+            dataEarthquake.map(async seism => {
+                console.log(seism);
+                if (!seism.data.alreadyCreated) {
+                    const { data } = seism;
+                    await botTelegram.sendMessage(
+                        telegramChatId,
+                        CreateMessage({
+                            mag: data.magnitude,
+                            local: data.region,
+                            hour: data.time,
+                            lat: data.latitude,
+                            lon: data.longitude,
+                            last: data.last24,
+                        }),
+                        { parse_mode: 'Markdown' },
+                    );
+                }
+            });
+        } catch {
+            console.log('Não há dados');
+        }
+    }, 3000);
 };
 
 start().then();
