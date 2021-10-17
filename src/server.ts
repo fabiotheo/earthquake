@@ -21,8 +21,8 @@ const longitude = -16.34;
 const maxradius = 10;
 const format = 'json';
 const minMagnitude = 3;
-const telegramToken = process.env.TELEGRAM_API_KEY || '';
-const telegramChatId = process.env.TELEGRAM_CHAT_ID || '';
+const telegramToken = process.env.TELEGRAM_API_KEY as string;
+const telegramChatId = process.env.TELEGRAM_CHAT_ID as string;
 
 const sendMessage = ({ mag, hour, local, lat, long, last }: MessageProps) => {
     const message = `🚨 *Atenção* 🚨
