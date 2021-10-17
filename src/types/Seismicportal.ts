@@ -52,3 +52,12 @@ export type DataCreated = {
 export type EarthquakeData = {
     data: DataCreated;
 };
+
+export type MessageProps = {
+    mag: number;
+    hour: Date;
+    local: string;
+    lat: number;
+    long: number;
+    last: number;
+};

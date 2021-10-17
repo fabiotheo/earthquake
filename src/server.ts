@@ -7,7 +7,7 @@ import 'dotenv/config';
 import { query as q } from 'faunadb';
 import Telegram from 'node-telegram-bot-api';
 
-import { DataResponse, EarthquakeData } from './types/Seismicportal';
+import { DataResponse, EarthquakeData, MessageProps } from './types/Seismicportal';
 
 import { fauna } from './services/fauna';
 
@@ -23,15 +23,6 @@ const format = 'json';
 const minMagnitude = 3;
 const telegramToken = process.env.TELEGRAM_API_KEY || '';
 const telegramChatId = process.env.TELEGRAM_CHAT_ID || '';
-
-interface MessageProps {
-    mag: number;
-    hour: Date;
-    local: string;
-    lat: number;
-    long: number;
-    last: number;
-}
 
 const sendMessage = ({ mag, hour, local, lat, long, last }: MessageProps) => {
     const message = `🚨 *Atenção* 🚨
@@ -106,9 +97,7 @@ const start = async () => {
                 );
             }
         });
-
-        console.log('3 seconds');
-    }, 5000);
+    }, 1000 * 60 * 5);
 };
 
 start().then();
