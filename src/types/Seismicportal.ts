@@ -55,7 +55,7 @@ export type EarthquakeData = {
 
 export type MessageProps = {
     mag: number;
-    hour: Date;
+    hour: string;
     local: string;
     lat: number;
     lon: number;

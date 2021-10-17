@@ -77,7 +77,7 @@ const start = async () => {
                         CreateMessage({
                             mag: data.magnitude,
                             local: data.region,
-                            hour: data.time,
+                            hour: moment.tz(data.time, 'America/Sao_Paulo').format('YYYY/MM/DD hh:mm'),
                             lat: data.latitude,
                             lon: data.longitude,
                             last: data.last24,
