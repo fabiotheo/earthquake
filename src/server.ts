@@ -6,7 +6,7 @@ import axios from 'axios';
 import 'dotenv/config';
 import { query as q } from 'faunadb';
 import Telegram from 'node-telegram-bot-api';
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 
 import { DataResponse, EarthquakeData } from './types/Seismicportal';
 import CreateMessage from './services/CreateMessage';
