@@ -6,6 +6,7 @@ import axios from 'axios';
 import 'dotenv/config';
 import { query as q } from 'faunadb';
 import Telegram from 'node-telegram-bot-api';
+import express, { Request, Response, NextFunction } from 'express';
 
 import { DataResponse, EarthquakeData } from './types/Seismicportal';
 import CreateMessage from './services/CreateMessage';
@@ -90,3 +91,11 @@ const start = async () => {
 };
 
 start().then();
+
+const app = express();
+
+app.use(express.json());
+
+app.listen(3090, () => {
+    console.log('👽 Server started on port 3090!');
+});
