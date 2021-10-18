@@ -22,7 +22,7 @@ const latitude = 28.26;
 const longitude = -16.34;
 const maxradius = 10;
 const format = 'json';
-const minMagnitude = 3;
+const minMagnitude = 2.9;
 const telegramToken = process.env.TELEGRAM_API_KEY || '';
 const telegramChatId = process.env.TELEGRAM_CHAT_ID || '';
 
