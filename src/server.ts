@@ -16,21 +16,26 @@ import { fauna } from './services/fauna';
 const urlQuery = 'https://www.seismicportal.eu/fdsnws/event/1/query';
 const limit = 50;
 const dateNow = new Date();
-const now = moment(dateNow).tz('America/Sao_Paulo').format();
+const now = moment(dateNow).add(8, 'hours').tz('America/Sao_Paulo').format();
 const before = moment(dateNow).subtract(24, 'hours').tz('America/Sao_Paulo').format();
 const latitude = 28.26;
 const longitude = -16.34;
-const maxradius = 10;
+const maxradius = 5;
 const format = 'json';
-const minMagnitude = 2.9;
+const minMagnitude = 3;
 const telegramToken = process.env.TELEGRAM_API_KEY || '';
 const telegramChatId = process.env.TELEGRAM_CHAT_ID || '';
 
 const botTelegram = new Telegram(telegramToken, { polling: true });
 
+let times = 0;
+
 const start = async () => {
     console.log('Server Started');
     setInterval(async () => {
+        times += 1;
+
+        console.log(`Numero de consultas: ${times}`);
         try {
             const response = await axios.get<DataResponse>(
                 `${urlQuery}?limit=${limit}&start=${before}&end=${now}&lat=${latitude}&lon=${longitude}&maxradius=${maxradius}&format=${format}&minmag=${minMagnitude}`,
@@ -69,17 +74,18 @@ const start = async () => {
             const dataEarthquake = await Promise.all(promises);
 
             dataEarthquake.map(async seism => {
-                console.log(seism);
                 if (!seism.data.alreadyCreated) {
+                    console.log(seism);
                     const { data } = seism;
                     await botTelegram.sendMessage(
                         telegramChatId,
                         CreateMessage({
                             mag: data.magnitude,
                             local: data.region,
-                            hour: moment.tz(data.time, 'America/Sao_Paulo').format('YYYY/MM/DD hh:mm'),
+                            hour: moment(data.time).utcOffset('-0400').format('YYYY/MM/DD HH:mm'),
                             lat: data.latitude,
                             lon: data.longitude,
+                            depth: data.depth,
                             last: data.last24,
                         }),
                         { parse_mode: 'Markdown' },
@@ -89,7 +95,7 @@ const start = async () => {
         } catch {
             console.log('Não há dados');
         }
-    }, 1000 * 60 * 5);
+    }, 1000 * 60);
 };
 
 start().then();

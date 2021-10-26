@@ -60,4 +60,5 @@ export type MessageProps = {
     lat: number;
     lon: number;
     last: number;
+    depth: number;
 };
