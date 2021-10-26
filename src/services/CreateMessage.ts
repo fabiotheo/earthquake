@@ -7,7 +7,7 @@ const CreateMessage = ({ mag, hour, local, lat, lon, last, depth }: MessageProps
     *Horário*: ${hour}
     Latitude: ${lat}
     Longitude: ${lon}
-    Profundidate: ${depth}
+    Profundidate: ${depth} Km
     Tremores nas ultimas 24 horas: ${last}
     `;
 
